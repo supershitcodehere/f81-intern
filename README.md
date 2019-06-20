@@ -3,6 +3,8 @@
 # check_apiの結果
 [check_result.txt](/check_result.txt)
 
+[init/f81.sql](/init/f81.sql)
+
 # 実行環境
 ```
 PHP7.3.5 +  10.3.14-MariaDB - mariadb.org binary distribution
