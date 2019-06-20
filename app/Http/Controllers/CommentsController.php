@@ -29,6 +29,7 @@ class CommentsController extends Controller
         if(!Post::isPostExists($post_id)){
             throw new GuestApiException("存在しないpost_idです",400);
         }
+
         if($textCount <= 0 || $textCount > 100){
             throw new GuestApiException("textは1文字以上100文字以下にしてください",400);
         }
