@@ -32,6 +32,7 @@ class GuestApiRequestServiceProvider extends ServiceProvider
         $this->addMacroGuestApiRequest();
     }
 
+
     private function addMacroGuestApiRequest(){
         Request::macro('getGuestApiRequest', function () {
            $body = $this->input();
