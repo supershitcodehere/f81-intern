@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TestUser extends Model
 {
+    public $timestamps = false;
+    public $incrementing = false;
     protected $fillable = [];
 
     public static function isUserExists(string $id) : bool {
