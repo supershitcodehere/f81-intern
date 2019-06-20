@@ -12,11 +12,28 @@ use Illuminate\Support\Facades\DB;
 class CommentsController extends Controller
 {
     public function index($post_id){
-        DB::statement('SET @parent_post_id = null;');
+        //DB::statement(DB::raw('SET @parent_post_id = null'));
+
+        //DB::unprepared('SET @parent_post_id = null;');
+        $query = DB::table('comments')
+            ->select([
+               'comments.id',
+               'comments.user_id',
+               'comments.text',
+                DB::raw("(SELECT COUNT(1) FROM comments WHERE comments.parent_post_id = '{$post_id}') AS comment_count"),
+                'comments.parent_post_id',
+                'comments.posted_at'
+            ])
+            ->where('parent_post_id','=',$post_id)
+            ->orderBy('comments.posted_at','desc')
+
+        ;
+
+        /*
         $query =
             DB::raw(
                 "
-(SELECT 
+(SELECT
  comments.id,
  comments.user_id,
  comments.text,
@@ -28,7 +45,8 @@ ORDER BY posted_at DESC
 
 "
             );
-        return response()->success(['comments'=>DB::select($query)]);
+        */
+        return response()->success(['comments'=>$query->get()]);
     }
 
     public function create($post_id){

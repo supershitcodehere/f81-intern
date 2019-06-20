@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Exceptions\GuestApiException;
 use App\Post;
 use App\TestUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
 
@@ -12,37 +14,35 @@ class PostsController extends Controller
 {
 
     public function index(){
-        DB::statement('SET @parent_post_id = null;');
-        $query =
-            DB::raw(
-                '
+        $commentsCounts = [];
 
-(SELECT
- posts.id,
- posts.user_id,
- posts.text,
- (SELECT COUNT(comments.id) FROM comments WHERE comments.parent_post_id = posts.id) AS comment_count,
+        $posts = Post::getLatestPosts();
+        if(isset($posts)){
+            $post_ids = [];
+            foreach($posts as $post){
+                if(!isset($post->parent_post_id)){
+                    continue;
+                }
+                $post_ids[$post->parent_post_id] = $post->parent_post_id;
+            }
+            $commentsCounts = Comment::getCommentsCounts($post_ids);
+        }
 
- @parent_post_id as parent_post_id,
- posts.posted_at 
- FROM posts ORDER BY posts.posted_at DESC)
-UNION ALL
-(SELECT 
- comments.id,
- comments.user_id,
- comments.text,
- (SELECT COUNT(comments.parent_post_id) FROM comments) AS comment_count,
- @parent_post_id := comments.parent_post_id as parent_post_id,
- comments.posted_at
- FROM comments ORDER BY comments.posted_at DESC)
-ORDER BY posted_at DESC
-
-'
-            );
-        return response()->success(['posts'=>DB::select($query)]);
+        return response()->success(['posts'=>$this->mergeCommentCount($posts,$commentsCounts)]);
 
     }
 
+    protected function mergeCommentCount(Collection $posts,Collection $comments) : Collection{
+        foreach($posts as $key=>$post){
+            $id = $post->parent_post_id ?? $post->id;
+            if(isset($comments[$id])){
+                $post->comment_count = $comments[$id]->comment_count;
+            }else{
+                $post->comment_count = 0;
+            }
+        }
+        return $posts;
+    }
 
     public function create(){
         $body = request()->getGuestApiRequest();

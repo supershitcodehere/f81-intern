@@ -3,11 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
 
 class Comment extends Model
 {
     public $timestamps = false;
+    public $incrementing = false;
     public $fillable = [];
 
     public function create($user_id,$text,$parent_post_id){
@@ -16,5 +19,17 @@ class Comment extends Model
         $this->text = $text;
         $this->parent_post_id = $parent_post_id;
         $this->save();
+    }
+
+    public static function getCommentsCounts($post_ids = []) : Collection{
+        return  Comment::query()
+            ->select([
+                'comments.parent_post_id',
+                DB::raw('count(1) as comment_count'),
+            ])
+            ->whereIn('comments.parent_post_id',$post_ids)
+            ->groupBy('comments.parent_post_id')
+            ->get()
+            ->keyBy('parent_post_id');
     }
 }
