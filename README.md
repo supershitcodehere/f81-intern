@@ -70,6 +70,7 @@ DB_PASSWORD=f81
 ```
 
 ```
+php artisan key:generate
 php artisan migrate
 php artisan serve
 .\check_api.exe http://127.0.0.1:8000
