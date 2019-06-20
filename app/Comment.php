@@ -32,4 +32,19 @@ class Comment extends Model
             ->get()
             ->keyBy('parent_post_id');
     }
+
+    public static function getComments(string $post_id) : Collection{
+        $query = DB::table('comments')
+            ->select([
+                'comments.id',
+                'comments.user_id',
+                'comments.text',
+                'comments.parent_post_id',
+                'comments.posted_at'
+            ])
+            ->where('parent_post_id','=',$post_id)
+            ->orderBy('comments.posted_at','desc')
+        ;
+        return $query->get();
+    }
 }

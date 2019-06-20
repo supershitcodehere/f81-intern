@@ -5,6 +5,7 @@ use App\Comment;
 use App\Exceptions\GuestApiException;
 use App\Post;
 use App\TestUser;
+use App\Traits\CommentApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -13,36 +14,13 @@ use Webpatser\Uuid\Uuid;
 class PostsController extends Controller
 {
 
+    use CommentApi;
+
     public function index(){
-        $commentsCounts = [];
-
-        $posts = Post::getLatestPosts();
-        if(isset($posts)){
-            $post_ids = [];
-            foreach($posts as $post){
-                if(!isset($post->parent_post_id)){
-                    continue;
-                }
-                $post_ids[$post->parent_post_id] = $post->parent_post_id;
-            }
-            $commentsCounts = Comment::getCommentsCounts($post_ids);
-        }
-
-        return response()->success(['posts'=>$this->mergeCommentCount($posts,$commentsCounts)]);
-
+        return response()->success(['posts'=>$this->getMergedPosts(Post::getLatestPosts())]);
     }
 
-    protected function mergeCommentCount(Collection $posts,Collection $comments) : Collection{
-        foreach($posts as $key=>$post){
-            $id = $post->parent_post_id ?? $post->id;
-            if(isset($comments[$id])){
-                $post->comment_count = $comments[$id]->comment_count;
-            }else{
-                $post->comment_count = 0;
-            }
-        }
-        return $posts;
-    }
+
 
     public function create(){
         $body = request()->getGuestApiRequest();

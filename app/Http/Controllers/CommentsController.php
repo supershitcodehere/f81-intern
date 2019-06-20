@@ -6,47 +6,17 @@ use App\Comment;
 use App\Exceptions\GuestApiException;
 use App\Post;
 use App\TestUser;
+use App\Traits\CommentApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CommentsController extends Controller
 {
+    use CommentApi;
+
     public function index($post_id){
-        //DB::statement(DB::raw('SET @parent_post_id = null'));
 
-        //DB::unprepared('SET @parent_post_id = null;');
-        $query = DB::table('comments')
-            ->select([
-               'comments.id',
-               'comments.user_id',
-               'comments.text',
-                DB::raw("(SELECT COUNT(1) FROM comments WHERE comments.parent_post_id = '{$post_id}') AS comment_count"),
-                'comments.parent_post_id',
-                'comments.posted_at'
-            ])
-            ->where('parent_post_id','=',$post_id)
-            ->orderBy('comments.posted_at','desc')
-
-        ;
-
-        /*
-        $query =
-            DB::raw(
-                "
-(SELECT
- comments.id,
- comments.user_id,
- comments.text,
- (SELECT COUNT(comments.parent_post_id) FROM comments) AS comment_count,
- @parent_post_id := comments.parent_post_id as parent_post_id,
- comments.posted_at
- FROM comments WHERE parent_post_id = '{$post_id}' ORDER BY comments.posted_at DESC)
-ORDER BY posted_at DESC
-
-"
-            );
-        */
-        return response()->success(['comments'=>$query->get()]);
+        return response()->success(['comments'=>$this->getMergedPosts(Comment::getComments($post_id))]);
     }
 
     public function create($post_id){
