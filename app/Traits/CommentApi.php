@@ -11,10 +11,8 @@ trait CommentApi{
         if(isset($posts)){
             $post_ids = [];
             foreach($posts as $post){
-                if(!isset($post->parent_post_id)){
-                    continue;
-                }
-                $post_ids[$post->parent_post_id] = $post->parent_post_id;
+                $id = $post->parent_post_id ?? $post->id;
+                $post_ids[$id] = $id;
             }
             $commentsCounts = Comment::getCommentsCounts($post_ids);
         }
