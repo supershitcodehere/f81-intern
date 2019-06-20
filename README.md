@@ -61,7 +61,7 @@ php ./composer.phar install
 cp .env.example .env
 ```
 
-- .envに以下の例を参考にデータベース項目を変更
+- .envに以下の例を参考にデータベース接続情報を変更
 ```bash
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
