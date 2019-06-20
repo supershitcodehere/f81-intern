@@ -1,7 +1,7 @@
 ==== 正常パターンチェック ===
 
 ==== GET /posts リクエストチェック ===
-レスポンスの詳細 :  {"result":"OK","posts":[{"id":"F9D2B2AB-FD71-4124-9C8A-C13B31438E31","user_id":"11111111-1111-1111-1111-111111111111","text":"have a good night!","comment_count":2,"parent_post_id":"3E10E2AC-E316-4D35-B298-42C46E29E02C","posted_at":"2019-06-20 14:15:39"},{"id":"3E10E2AC-E316-4D35-B298-42C46E29E02C","user_id":"11111111-1111-1111-1111-111111111111","text":"have a good night!","comment_count":1,"parent_post_id":null,"posted_at":"2019-06-20 14:15:38"},{"id":"612A5977-286B-4A72-BC71-37630DF85338","user_id":"11111111-1111-1111-1111-111111111111","text":"have a good night!","comment_count":2,"parent_post_id":"64F87060-894F-4C18-B9DD-C82B4F2FB4A1","posted_at":"2019-06-20 14:15:31"},{"id":"64F87060-894F-4C18-B9DD-C82B4F2FB4A1","user_id":"11111111-1111-1111-1111-111111111111","text":"have a good night!","comment_count":1,"parent_post_id":null,"posted_at":"2019-06-20 14:15:30"}]}
+レスポンスの詳細 :  {"result":"OK","posts":[{"id":"60B739E7-2A4D-4E5B-ADA3-46D0AEB0FAFA","user_id":"11111111-1111-1111-1111-111111111111","text":"have a good night!","parent_post_id":null,"posted_at":"2019-06-20 19:47:33","comment_count":1},{"id":"DE0ADA0E-E44E-4D06-97D2-EF4A1C11EC74","user_id":"11111111-1111-1111-1111-111111111111","text":"have a good night!","parent_post_id":"60B739E7-2A4D-4E5B-ADA3-46D0AEB0FAFA","posted_at":"2019-06-20 19:47:33","comment_count":1}]}
 成功
 
 ==== GET /posts/:post_id/comments リクエストチェック ===
@@ -31,11 +31,11 @@
 成功
 
 ==== POST /posts/:post_id/comments/create テキストの長さが0 ===
-レスポンスの詳細 :  {"result":"NG","message":"\u5b58\u5728\u3057\u306a\u3044post_id\u3067\u3059"}
+レスポンスの詳細 :  {"result":"NG","message":"text\u306f1\u6587\u5b57\u4ee5\u4e0a100\u6587\u5b57\u4ee5\u4e0b\u306b\u3057\u3066\u304f\u3060\u3055\u3044"}
 成功
 
 ==== POST /posts/:post_id/comments/create テキストの長さが101 ===
-レスポンスの詳細 :  {"result":"NG","message":"\u5b58\u5728\u3057\u306a\u3044post_id\u3067\u3059"}
+レスポンスの詳細 :  {"result":"NG","message":"text\u306f1\u6587\u5b57\u4ee5\u4e0a100\u6587\u5b57\u4ee5\u4e0b\u306b\u3057\u3066\u304f\u3060\u3055\u3044"}
 成功
 
 ==== POST /posts/:post_id/comments/create 存在しないuser_idを指定 ===
